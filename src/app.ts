@@ -1,6 +1,6 @@
 import { json } from "body-parser";
 import express, { Application, NextFunction, Request, Response } from "express";
-import * as router from "./router/router";
+import { router } from "./router/router";
 import { validateRequestPayload } from "./utils/validation/validator";
 import { sendInvalidMethodResponse, sendResponse } from "./utils/wrappers/response-wrapper";
 import session from 'express-session'
@@ -21,7 +21,7 @@ app.use(validateRequestPayload);
 
 // mongoose.connect('mongodb://localhost:27017/testiranje').then((data:any)=>console.log(data)).catch(error=>console.log(error))
 
-//Express session middleware
+//Express session middleware with MongoStore
 app.use(session({
     secret: 'secret-key',
     resave: false,
@@ -32,6 +32,9 @@ app.use(session({
         autoRemove: 'native' 
     })
 }))
+
+
+
 
 app.get('/login', (request: Request, response: Response) =>{
     //check user credentials (username, password) - TODO
@@ -59,7 +62,7 @@ function isAuthenticated(request: Request){
 }
 
 //Set routers
-app.use('/', router.ExampleRouter)
+app.use('/', router)
 // app.use('/operation', routers.OperationsRouter);
 // app.use('/internal', routers.InternalRouter);
 // app.use('/report', routers.ReportsRouter);

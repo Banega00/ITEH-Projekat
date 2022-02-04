@@ -4,6 +4,7 @@ config();
 
 import { env } from './src/utils/wrappers/env-wrapper';
 import app from "./src/app";
+import { createConnection } from "typeorm";
 
 
 
@@ -12,9 +13,9 @@ import app from "./src/app";
     try {
         const PORT = env.port;
         
-        //Connecting with database
-        //await createConnection();
-
+        // Connecting with database
+        await createConnection();
+        console.log(`Connected to database successfully! 💾`)
         //Starting server
         app.listen(PORT);
         console.log(`Server is listening on port ${PORT} 🔥🔥🔥`)

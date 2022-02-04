@@ -4,6 +4,7 @@
   "description": "This project is example of basic structure for Express with Typescript project",
   "main": "index.js",
   "dependencies": {
+    "axios": "^0.25.0",
     "connect-mongo": "^4.6.0",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",

@@ -1,3 +1,10 @@
-//Purpose of this file is to export all routers from one place
+import { Router } from "express";
+import { Controller } from "../api/controller";
 
-export {ExampleRouter} from "./example-router"
+
+
+export const router = Router()
+
+
+router.get('/examplePath', Controller.exampleMiddleware);
+

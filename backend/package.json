@@ -1,0 +1,38 @@
+{
+  "name": "express-with-ts-skeleton-",
+  "version": "1.0.0",
+  "description": "This project is example of basic structure for Express with Typescript project",
+  "main": "index.js",
+  "dependencies": {
+    "axios": "^0.25.0",
+    "connect-mongo": "^4.6.0",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "express-session": "^1.17.2",
+    "joi": "^17.4.2",
+    "mongodb": "^4.3.1",
+    "mongoose": "^6.1.7",
+    "pg": "^8.7.1",
+    "typeorm": "^0.2.41"
+  },
+  "devDependencies": {
+    "@types/body-parser": "^1.19.1",
+    "@types/express": "^4.17.13",
+    "@types/express-session": "^1.17.4",
+    "@types/node": "^16.4.13"
+  },
+  "scripts": {
+    "start": "ts-node main",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bane12345/Express-with-TS-skeleton.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Bane12345/Express-with-TS-skeleton/issues"
+  },
+  "homepage": "https://github.com/Bane12345/Express-with-TS-skeleton#readme"
+}

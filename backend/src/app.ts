@@ -6,6 +6,7 @@ import { sendInvalidMethodResponse, sendResponse } from "./utils/wrappers/respon
 import session from 'express-session'
 import { ErrorStatusCode, SuccessStatusCode } from "./utils/status-codes";
 import MongoDbStore from 'connect-mongo';
+import cors from "cors";
 declare module 'express-session' {
   export interface SessionData {
     user: { [key: string]: any };
@@ -18,6 +19,7 @@ app.use(json({limit: "50mb", type: "application/json"}));
 
 //Middleware for validating requests payload
 app.use(validateRequestPayload);
+app.use(cors());
 
 // mongoose.connect('mongodb://localhost:27017/testiranje').then((data:any)=>console.log(data)).catch(error=>console.log(error))
 
@@ -27,14 +29,11 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     store: MongoDbStore.create({
-        mongoUrl: 'mongodb://127.0.0.1:27017/testiranje',
+        mongoUrl: 'mongodb://127.0.0.1:27017/e-betting-sessions',
         ttl: 14 * 24 * 60 * 60,
         autoRemove: 'native' 
     })
 }))
-
-
-
 
 app.get('/login', (request: Request, response: Response) =>{
     //check user credentials (username, password) - TODO

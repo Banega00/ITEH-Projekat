@@ -14,6 +14,10 @@ class EnvWrapper {
         logging: this.toBoolean(this.getProperty("orm_logging"))
     }
 
+    public soccer = {
+        api: this.getProperty("soccer_api_url")
+    }
+
     //Reads property from env file
     private getProperty(property: string): string {
         return process.env[property.toUpperCase()] || process.env[property.toLowerCase()] || "";

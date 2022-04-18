@@ -35,7 +35,7 @@ export interface BetGameOutcomesData {
     OrderId: number;
     CodeForPrinting: string;
     BetGameId: number;
-  };
+  }[];
 }
 
 export interface PeriodsData {
@@ -65,6 +65,7 @@ export interface CompetitionData {
   IsFeatured: boolean;
   CountryId: number;
   SportId: number;
+  Matches?: number
 }
 
 ////////////////////////////////////////////////////////////////////

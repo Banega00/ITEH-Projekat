@@ -12,7 +12,8 @@ import Select from "@mui/material/Select"
 import MenuItem from "@mui/material/MenuItem"
 import Typography from "@mui/material/Typography"
 import Grid from "@mui/material/Grid"
-
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import { getCountryFlag } from "../utils/get-country-flag"
 const httper = new Httper("http://localhost:3001")
 
 export const SportMatches: React.FC<{ sport: SportData, sportCompetitions: CompetitionData[], countries: CountryData[] }> =
@@ -57,10 +58,9 @@ export const SportMatches: React.FC<{ sport: SportData, sportCompetitions: Compe
         };
 
         return (
-            <div style={{flex:1}}>
+            <div style={{ flex: 1 }}>
                 <Card elevation={12}>
-                    <CardContent>
-                        {sport.Name}
+                    <CardContent sx={{ display: 'flex', alignItems: 'flex-end' }}>
 
                         <FormControl variant="filled" sx={{ m: 1, minWidth: 140 }}>
                             <InputLabel id="demo-simple-select-standard-label">Country</InputLabel>
@@ -108,13 +108,20 @@ export const SportMatches: React.FC<{ sport: SportData, sportCompetitions: Compe
                             </Select>
                         </FormControl>
 
-                        <div>{selectedCompetition && selectedCompetition.Name}</div>
+                        {selectedCompetition && 
+                        <Typography fontSize={24} sx={{ p: 1, ml: 3, display: 'flex', alignItems:'flex-end' }}>
+                            {getCountryFlag(selectedCountry?.ShortName)}
+                            <EmojiEventsIcon fontSize='large' />
+                            <Typography fontSize={24} sx={{ }}>
+                                {selectedCompetition.Name}
+                            </Typography>
+                        </Typography>}
                     </CardContent>
                 </Card>
 
-                                {/* default grid width is 12 */}
-                <Grid container spacing={2} sx={{padding:'10px'}}>
-                    {matches && matches.map(match => <MatchCard key={match.Id} match={match}/>)}
+                {/* default grid width is 12 */}
+                <Grid container spacing={2} sx={{ padding: '10px' }}>
+                    {matches && matches.map(match => <MatchCard key={match.Id} match={match} />)}
                 </Grid>
 
             </div>

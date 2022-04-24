@@ -16,17 +16,39 @@ export class TicketItemEntity{
     ticketId: number
 
     @Column({nullable: false})
+    name: string;
+
+    @Column({nullable: false, type:'decimal'})
     odd: number;
+
+    @Column({nullable: false})
+    codeForPrinting: string;
 
     @ManyToOne(() => MatchEntity, (match) => match.ticketItems)
     match: MatchEntity
 
     matchId: number
 
+    @Column({
+        type:'jsonb'
+    })
+    betMetadata:{
+        Id: number;
+        Name: string;
+        Description: string;
+        OrderId: number;
+        CodeForPrinting: string;
+        BetGameId: number;
+    }
+
     constructor(obj?:Partial<TicketItemEntity>) {
         if(!obj) return;
         obj.ticket && (this.ticket = obj.ticket)
         obj.ticketId && (this.ticketId = obj.ticketId)
         obj.odd && (this.odd = obj.odd)
+        obj.codeForPrinting && (this.codeForPrinting = obj.codeForPrinting)
+        obj.name && (this.name = obj.name)
+        obj.betMetadata && (this.betMetadata = obj.betMetadata)
+        obj.match && (this.match = obj.match)
     }
 }

@@ -13,11 +13,11 @@ export class Httper {
     constructor(baseUrl: string) {
         this.baseUrl = baseUrl;
 
-        this.get('/healt').then(response => {
-            console.log(response)
-        }).catch(error => {
-            console.log(error)
-        })
+        // this.get('/healt').then(response => {
+        //     console.log(response)
+        // }).catch(error => {
+        //     console.log(error)
+        // })
     }
 
     private post = async <T>(route: string, body: any, options?: any): Promise<ResponseModel<T>> => {

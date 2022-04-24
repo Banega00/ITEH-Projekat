@@ -24,7 +24,7 @@ export class UserRepository{
     
     async getUserProfileData(id:number, entityManager?:EntityManager){
         const manager = entityManager ?? this.userRepository.manager 
-        return await manager.findOne(UserEntity,{where:{id}, relations:['transactions'], order: {transactions: { date: "DESC"}}})
+        return await manager.findOne(UserEntity,{where:{id}, relations:['transactions','tickets', 'tickets.items', 'tickets.items.match'], order: {transactions: { date: "DESC"}, tickets: {date: "DESC"}}})
     }
 
     async makeTransaction(userId: number, value: number, transactionPurpose: TransactionPurpose, entityManager?:EntityManager){

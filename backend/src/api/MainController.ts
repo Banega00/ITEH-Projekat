@@ -9,6 +9,14 @@ import { sendResponse } from "../utils/wrappers/response-wrapper";
 import { UserProfileData } from '../models/responses/UserProfileData.response';
 import { UserRepository } from '../repository/user-repository';
 import { TicketItemModel } from '../../../frontend/src/models/ticket.model'
+import { dataSource } from '../repository/db-connection';
+import { TicketEntity } from '../entities/ticket.entity';
+import { TransactionEntity } from '../entities/transaction.entity';
+import { TransactionPurpose } from '../models/transaction-purpose.enum';
+import { TicketStatus } from '../models/ticket-status.enum';
+import { MatchEntity } from '../entities/match.entity';
+import { TicketItemEntity } from '../entities/ticket-item.entity';
+import { UserEntity } from '../entities/user.entity';
 
 export class MainController{
     
@@ -116,6 +124,47 @@ export class MainController{
     
     public submitTicket = async (request: Request, response:Response): Promise<any> => {
         const ticket: {selectedBets:TicketItemModel[]} = request.body.ticket;
-        const ticketAmount: number = request.body.ticket;
+        const ticketAmount: number = request.body.ticketAmount;
+        if(!request.session.user){
+            return sendResponse(response, 401, ErrorStatusCode.Unauthorized);
+        }
+
+        try{
+            if(ticketAmount >= request.session.user.balance){
+               return sendResponse(response, 400, ErrorStatusCode.InsufficientMoney);
+            }
+
+            dataSource.transaction(async transactionalEntityManager => {
+                const user = await transactionalEntityManager.findOne(UserEntity, {where: {id: request.session.user!.id}})
+                if(!user) throw new Error("USER NOT FOUND!")
+                const transactionEntity = new TransactionEntity({transactionPurpose:TransactionPurpose.TICKET, value:(-1)*ticketAmount, userId: user.id})
+                await transactionalEntityManager.save(transactionEntity);
+                user.balance = user.balance + transactionEntity.value;
+                await transactionalEntityManager.save(user);
+
+                const totalOdd = ticket.selectedBets.reduce(function (accumulator, currentValue) {
+                    return accumulator * currentValue.selectedBet.Odds;
+                  }, 1);
+                const maximumWinning = totalOdd * ticketAmount;
+                const ticketEntity = new TicketEntity({transaction: transactionEntity, totalOdd, maximumWinning, ticketAmount, status: TicketStatus.Active, user: user})
+            
+                await transactionalEntityManager.save(ticketEntity);
+
+                for(const ticketItem of ticket.selectedBets){
+                    let match = await transactionalEntityManager.findOne(MatchEntity, {where: {Id: ticketItem.Id}})
+                    if(!match){
+                        const {FavouriteBets, AllBets, selectedBet, StartDate ,...matchData } = ticketItem;
+                        match = await transactionalEntityManager.save(new MatchEntity({...matchData, StartDate: new Date(StartDate)}))
+                    }
+
+                    const savedTicketItem = await transactionalEntityManager.save(new TicketItemEntity({matchId:match.Id, match:match, ticket: ticketEntity, odd: ticketItem.selectedBet.Odds, betMetadata: ticketItem.selectedBet.BetMetadata, codeForPrinting:ticketItem.selectedBet.BetMetadata?.CodeForPrinting, name: ticketItem.selectedBet.BetMetadata?.Name, ticketId: ticketEntity.id}))
+                    console.log(savedTicketItem)
+                }
+            });
+            return sendResponse(response, 200, SuccessStatusCode.Success);
+        }catch(error){
+            console.log(error)
+            return sendResponse(response, 500, ErrorStatusCode.UnknownError);
+        }
     }
 }

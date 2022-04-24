@@ -61,9 +61,22 @@ const Home = () => {
       primary: green
     }
   });
+  const globalContext = useContext(GlobalContext);
+
+
+  useEffect(()=>{
+    setInterval(()=>{
+      console.log("OVDE")
+      globalContext.setRefreshGlobalContext(!globalContext.refreshGlobalContext)
+    },20000) //fetch master data every 20 sec
+  },[])
   
 
   const submitTicket = () =>{
+    if(!ticketAmount || ticketAmount <= 0){
+      alert("Enter valid ticket amount")
+      return;
+    }
     if(!globalContext.user || !ticketAmount) return;
     if(ticketAmount > globalContext.user.balance){
       alert('Insufficient money')
@@ -91,7 +104,6 @@ const Home = () => {
   const [ticketDialogState, setTicketDialogState] = useState(false);
   const [ticketAmount, setTicketAmount] = useState<number | undefined>(undefined);
 
-  const globalContext = useContext(GlobalContext);
 
   const popupTicketModal = () => {
     if (globalContext.user == undefined) {

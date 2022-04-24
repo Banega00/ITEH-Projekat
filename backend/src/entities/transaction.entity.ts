@@ -28,5 +28,6 @@ export class TransactionEntity{
         obj.value && (this.value = obj.value)
         obj.transactionPurpose && (this.transactionPurpose = obj.transactionPurpose)
         obj.user && (this.user = obj.user)
+        obj.userId && (this.userId = obj.userId)
     }
 }

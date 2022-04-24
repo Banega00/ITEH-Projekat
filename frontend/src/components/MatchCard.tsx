@@ -35,7 +35,7 @@ export const MatchCard: React.FC<{ match: MatchModel }> = ({ match }) => {
 
         let newSelectedBets = globalContext.ticket.selectedBets.filter(ticketBet => ticketBet.Id != match.Id )
         newSelectedBets.push({...match, selectedBet: bet});
-        globalContext.setTicket({...globalContext, selectedBets: newSelectedBets})
+        globalContext.setTicket({selectedBets: newSelectedBets})
     }
     return (
         <Grid item xs={12}>

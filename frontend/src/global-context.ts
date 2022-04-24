@@ -10,7 +10,9 @@ const GlobalContext = createContext<{
     setTicket: Function
     setSelectedSport: Function
     setUser: Function
+    refreshGlobalContext: boolean
+    setRefreshGlobalContext: Function
   }>
-    ({ masterData: undefined, selectedSport: undefined, user: undefined, ticket: { selectedBets: [] }, setTicket: () => { }, setSelectedSport: () => { }, setUser: () => { }});
+    ({ masterData: undefined, selectedSport: undefined, user: undefined, ticket: { selectedBets: [] }, setTicket: () => { }, setSelectedSport: () => { }, setUser: () => { }, refreshGlobalContext: false, setRefreshGlobalContext: () =>{}});
 
 export default GlobalContext;

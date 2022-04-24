@@ -73,6 +73,7 @@ const App = () => {
   const [selectedSport, setSelectedSport] = useState<SportData>();
   const [ticket, setTicket] = useState<TicketModel>({ selectedBets: [] });
   const [user, setUser] = useState<any>(undefined);
+  const [refreshGlobalContext, setRefreshGlobalContext] = useState<any>(false);
 
   useEffect(() => {
     const getMasterData = async () => await httper.getMasterData();
@@ -102,11 +103,11 @@ const App = () => {
         setUser(undefined)
       }
     })
-  }, [])
+  }, [refreshGlobalContext])
 
   return (
     <ThemeProvider theme={theme1}>
-      <GlobalContext.Provider value={{ masterData: masterData, selectedSport: selectedSport, user: user, ticket: ticket, setTicket: setTicket, setSelectedSport: setSelectedSport, setUser: setUser  }}>
+      <GlobalContext.Provider value={{ masterData: masterData, selectedSport: selectedSport, user: user, ticket: ticket, setTicket: setTicket, setSelectedSport: setSelectedSport, setUser: setUser, refreshGlobalContext, setRefreshGlobalContext  }}>
         <BrowserRouter>
           <Routes>
             <Route path="/home" element={<Home />} />

@@ -5,7 +5,8 @@ export enum ErrorStatusCode {
     Unauthorized = 10004,
     InvalidUsername = 10005,
     InvalidPassword = 10006,
-    UserAlreadyExists = 10007
+    UserAlreadyExists = 10007,
+    InsufficientMoney = 10008
 }
 
 
@@ -26,7 +27,8 @@ const ErrorStatusCodeDescription: { [key: number]: string } = {
     10004: "Unauthorized",
     10005: "Invalid username",
     10006: "Invalid password",
-    10007: "User with provided username already exists"
+    10007: "User with provided username already exists",
+    10008: "Insufficient money in account",
 }
 
 const SuccessStatusCodeDescription: { [key: number]: string } = {

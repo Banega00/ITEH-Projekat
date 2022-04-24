@@ -6,7 +6,7 @@ export interface MatchModel {
     AwayCompetitorName: string,
     Code: number,//ovo je code za rezultate - zove se sifra
     ExternalId: number,
-    StreamId: null,
+    StreamId: number,
     StartDate: string,
     Status: number,
     CompetitionId: number,

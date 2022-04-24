@@ -4,7 +4,7 @@ config();
 
 import { env } from './src/utils/wrappers/env-wrapper';
 import app from "./src/app";
-import { createConnection } from "typeorm";
+import { dataSource, setupConnection } from "./src/repository/db-connection";
 
 
 
@@ -14,7 +14,9 @@ import { createConnection } from "typeorm";
         const PORT = env.port;
         
         // Connecting with database
-        await createConnection();
+        console.log(dataSource);
+        
+        await setupConnection();
         console.log(`Connected to database successfully! 💾`)
         //Starting server
         app.listen(PORT);

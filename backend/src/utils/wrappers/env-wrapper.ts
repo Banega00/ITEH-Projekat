@@ -6,7 +6,9 @@ class EnvWrapper {
         port: this.toNumber(this.getProperty("pg_port")),
         username: this.getProperty("pg_username"),
         password: this.getProperty("pg_password"),
-        database: this.getProperty("pg_db_name"),
+        database: this.getProperty("pg_database"),
+        logging: this.getProperty("pg_logging"),
+        synchronize: this.getProperty("pg_synchronize"),
     }
  
     public orm = {

@@ -7,9 +7,10 @@ import session from 'express-session'
 import { ErrorStatusCode, SuccessStatusCode } from "./utils/status-codes";
 import MongoDbStore from 'connect-mongo';
 import cors from "cors";
+import { UserEntity } from "./entities/user.entity";
 declare module 'express-session' {
   export interface SessionData {
-    user: { [key: string]: any };
+    user: UserEntity;
   }
 }
 
@@ -19,7 +20,9 @@ app.use(json({limit: "50mb", type: "application/json"}));
 
 //Middleware for validating requests payload
 app.use(validateRequestPayload);
-app.use(cors());
+
+//cors middleware
+app.use(cors({credentials: true, origin:true}))
 
 // mongoose.connect('mongodb://localhost:27017/testiranje').then((data:any)=>console.log(data)).catch(error=>console.log(error))
 
@@ -34,31 +37,6 @@ app.use(session({
         autoRemove: 'native' 
     })
 }))
-
-app.get('/login', (request: Request, response: Response) =>{
-    //check user credentials (username, password) - TODO
-    request.session.user = request.body.user; //initialize session
-    return sendResponse(response, 200, SuccessStatusCode.Success)
-})
-
-app.get('/test', authMiddleware, (request: Request, response: Response) =>{
-    console.log("Korisnik " + request.session.user!.ime + " je poslao zahtev")
-    return sendResponse(response, 200, SuccessStatusCode.Success)
-})
-
-app.get('/logout', (request: Request, response: Response) =>{
-    request.session.destroy(()=>undefined);
-    return sendResponse(response, 200, SuccessStatusCode.Success)
-})
-
-function authMiddleware(request: Request, response: Response, next: NextFunction){
-    if(isAuthenticated(request)) return next();
-    return sendResponse(response, 401, ErrorStatusCode.Unauthorized)
-}
-
-function isAuthenticated(request: Request){
-    return request.session.user != undefined
-}
 
 //Set routers
 app.use('/', router)

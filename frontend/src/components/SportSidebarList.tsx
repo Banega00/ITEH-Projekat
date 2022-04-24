@@ -1,6 +1,6 @@
+import { ExpandLess, ExpandMore, SportsVolleyball } from "@mui/icons-material";
 import { List, ListItemButton, ListItemIcon, ListItemText, Collapse } from "@mui/material";
 import React from "react";
-import * as MuiIcons from '@mui/icons-material';
 import { SportData } from "../../../backend/src/models/soccer-bet/master-data.model";
 
 export const SportSidebarList: React.FC<{ sports: SportData[], selectedSport: SportData, setSelectedSport:Function }> = ({ sports, selectedSport, setSelectedSport }) => {
@@ -22,10 +22,10 @@ export const SportSidebarList: React.FC<{ sports: SportData[], selectedSport: Sp
       >
         <ListItemButton selected={sportListOpen} onClick={handleClick} sx={[(theme) => ({bgcolor: theme.palette.primary.light, '&:hover': {bgcolor: theme.palette.primary.main}, "&.Mui-selected":{backgroundColor: theme.palette.primary.main}, "&.Mui-selected:hover":{backgroundColor: theme.palette.primary.main}})]}>
           <ListItemIcon>
-            <MuiIcons.SportsVolleyball />
+            <SportsVolleyball />
           </ListItemIcon>
           <ListItemText primaryTypographyProps={{color:'white'}} sx={{display:'flex', justifyContent:'space-between', alignItems:'center'}} primary={`Sports`} secondary={sports.length}/>
-          {sportListOpen ? <MuiIcons.ExpandLess /> : <MuiIcons.ExpandMore />}
+          {sportListOpen ? <ExpandLess /> : <ExpandMore />}
         </ListItemButton>
         <Collapse in={sportListOpen} timeout="auto" unmountOnExit>
           <List component="div" sx={{maxHeight: '35vh', overflow: 'auto',}} disablePadding>
@@ -33,7 +33,7 @@ export const SportSidebarList: React.FC<{ sports: SportData[], selectedSport: Sp
               return (
                 <ListItemButton key={sport.Name} onClick={()=>setSelectedSport(sport)} selected={sport.Name == selectedSport.Name} sx={[{pl: 4}, (theme) => ({ '&:hover': {bgcolor: theme.palette.primary.light}, "&.Mui-selected .MuiTypography-root":{fontWeight:'900', fontSize:"1.1rem"}, "&.Mui-selected":{backgroundColor: theme.palette.primary.light, }, "&.Mui-selected:hover":{backgroundColor: theme.palette.primary.light}})]}>
                   <ListItemIcon>
-                    <MuiIcons.SportsVolleyball />
+                    <SportsVolleyball />
                   </ListItemIcon>
                   <ListItemText primary={sport.Name} />
                 </ListItemButton>

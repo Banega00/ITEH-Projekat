@@ -6,11 +6,17 @@ import { Request, Response, NextFunction } from "express";
 import { Httper } from "../utils/http-clients/httper";
 import { SuccessStatusCode } from "../utils/status-codes";
 import { sendResponse } from "../utils/wrappers/response-wrapper";
+import { UserProfileData } from '../models/responses/UserProfileData.response';
+import { UserRepository } from '../repository/user-repository';
+import { TicketItemModel } from '../../../frontend/src/models/ticket.model'
 
 export class MainController{
+    
     private soccerHttpClient:SoccerHttpClient;
+    private userRepository:UserRepository;
     constructor() { 
         this.soccerHttpClient = new SoccerHttpClient();
+        this.userRepository = new UserRepository();
         const a = 10;
     }
 
@@ -79,5 +85,37 @@ export class MainController{
             }
             return sendResponse(response, 400, ErrorStatusCode.UnknownError, null);
         }
+    }
+    
+    public getUserProfileData = async (request: Request, response:Response<UserProfileData>, next:NextFunction): Promise<any> => {
+        try{
+            const userProfileData = await this.userRepository.getUserProfileData(request.session.user!.id)
+            if(!userProfileData) return sendResponse(response, 404, ErrorStatusCode.UnknownError, null);
+
+            userProfileData.password = '';
+            return sendResponse(response, 200, SuccessStatusCode.Success, userProfileData);
+        }catch(error:any){
+            return sendResponse(response, 400, ErrorStatusCode.UnknownError, null);
+        }
+    }
+    
+    public makeTransaction = async (request: Request, response:Response): Promise<any> => {
+        const { id:userId } = request.session.user!;
+        const { transactionPurpose, value } = request.body;
+        try{
+            
+            await this.userRepository.makeTransaction(userId, value, transactionPurpose)
+
+            return sendResponse(response, 200, SuccessStatusCode.Success);
+        }catch(error:any){
+            console.error(error);
+            
+            return sendResponse(response, 400, ErrorStatusCode.UnknownError);
+        }
+    }
+    
+    public submitTicket = async (request: Request, response:Response): Promise<any> => {
+        const ticket: {selectedBets:TicketItemModel[]} = request.body.ticket;
+        const ticketAmount: number = request.body.ticket;
     }
 }

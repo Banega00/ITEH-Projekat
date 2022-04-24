@@ -1,8 +1,14 @@
-import { Box, Button, Card, CardContent, Grid, Typography, Divider } from '@mui/material'
 import { useContext, useEffect, useState } from 'react';
 import { MatchModel } from '../../../backend/src/models/soccer-bet/match.model'
-import { GlobalContext } from '../App';
 import { BettingOddsBtn } from './BettingOddsBtn';
+import moment from 'moment'
+import Grid from '@mui/material/Grid';
+import CardContent from '@mui/material/CardContent';
+import Card from '@mui/material/Card';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import GlobalContext from '../global-context';
+
 export const MatchCard: React.FC<{ match: MatchModel }> = ({ match }) => {
     const globalContext = useContext(GlobalContext);
 
@@ -37,7 +43,7 @@ export const MatchCard: React.FC<{ match: MatchModel }> = ({ match }) => {
                 <CardContent sx={{ display: 'flex', padding: 0, '&.MuiCardContent-root': { padding: 0 } }}>
                     <Box sx={{ width: 0.3, backgroundColor: 'primary.dark', padding: 2 }}>
                         <Typography sx={{ fontSize: 14, color: 'white', textAlign: 'center' }} color="text.secondary" gutterBottom>
-                            {match.StartDate}
+                            {moment(match.StartDate).format('DD.MM | HH:mm')}
                         </Typography>
 
                         <Typography sx={{ fontSize: 24 }} color="white" gutterBottom>

@@ -1,4 +1,4 @@
-import { Box } from "@mui/material"
+import Box from "@mui/material/Box"
 import { useState } from "react";
 import { MatchModel } from "../../../backend/src/models/soccer-bet/match.model";
 

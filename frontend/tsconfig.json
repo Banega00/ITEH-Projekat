@@ -16,11 +16,13 @@
     "module": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "isolatedModules": true,
+    "isolatedModules": false,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "experimentalDecorators": true,
+    "strictPropertyInitialization": false
   },
   "include": [
     "src"
-  ]
+, "public/ticket-carousel.script.js"  ]
 }

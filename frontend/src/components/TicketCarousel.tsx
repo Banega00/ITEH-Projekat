@@ -1,0 +1,23 @@
+import useScript from "../scripts/useScript";
+import "../styles/TicketCarousel.scss";
+import ArrowCircleLeftOutlinedIcon from '@mui/icons-material/ArrowCircleLeftOutlined';
+import ArrowCircleRightOutlinedIcon from '@mui/icons-material/ArrowCircleRightOutlined';
+import { Ticket } from "./Ticket";
+import { TicketStatus } from '../models/ticket-status.enum'
+
+export const TicketCarousel: React.FC<{tickets:any[]}> = ({tickets}) => {
+    const script = useScript('http://localhost:3000/ticket-carousel.script.js')
+    tickets = [{status: TicketStatus.Active}, {status: TicketStatus.Missed}, {status:TicketStatus.Successful}]
+    return (
+        <main className="ticket-carousel" style={{height:'95%', paddingBottom:'100px'}}>
+            <div className="featured stacked-cards" style={{height:'95%'}}>
+                <ul className="slider" style={{height:'95%'}}>
+                    {tickets.map(ticket => <Ticket ticket={ticket}/>)}
+                </ul>
+            </div>
+            {/* <ArrowCircleRightOutlinedIcon onClick={() => changeCard(1)} sx={{position:'absolute', top:'50%', right:0, zIndex: 20, cursor:'pointer'}} fontSize="large"/> */}
+            {/* <ArrowCircleLeftOutlinedIcon onClick={() => changeCard(-1)} sx={{position:'absolute', left:0, top:'50%', zIndex:20, cursor:'pointer'}} fontSize="large"/> */}
+        </main>
+
+    )
+}

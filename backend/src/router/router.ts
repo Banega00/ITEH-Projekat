@@ -31,3 +31,5 @@ router.get('/user-profile-data', authController.authMiddleware, mainController.g
 router.post('/make-transaction', authController.authMiddleware, mainController.makeTransaction);
 
 router.post('/submit-ticket', authController.authMiddleware, mainController.submitTicket);
+
+router.get('/update-user-tickets', authController.authMiddleware, mainController.updateUserTicketsMiddleware)

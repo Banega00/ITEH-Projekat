@@ -1,4 +1,6 @@
 import fetch, { RequestInit, Response } from 'node-fetch';
+import https from 'https';
+import { MatchResulstResponse } from '../../models/responses/match-result.response';
 
 class HTTPResponseError extends Error {
     public response: Response
@@ -27,13 +29,17 @@ export class Httper {
 
     private baseUrl: string;
 
+    httpsAgent = new https.Agent({
+        rejectUnauthorized: false,
+      });
+
     public constructor(baseURL: string) {
         this.baseUrl = baseURL
     }
 
     public async post(path: string, data: any, config?: RequestInit): Promise<any> {
         try {
-            const response = await fetch(this.baseUrl + path, {method:'POST', body: data, ...config} )
+            const response = await fetch(this.baseUrl + path, {method:'POST', body: JSON.stringify(data), ...config, agent:this.httpsAgent} )
             checkStatus(response);//throw Error if http error
             return response.json();
         } catch (error) {
@@ -51,5 +57,11 @@ export class Httper {
             console.error(error);
             throw error;
         }
+    }
+
+
+    public async liveScoreForDay(dateString:string): Promise<MatchResulstResponse>{
+        const response = await this.post('/live_score_danas/', {today: dateString}, {headers:{'Content-Type':'application/json'}});
+        return response;
     }
 }

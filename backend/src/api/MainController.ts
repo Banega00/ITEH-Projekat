@@ -17,9 +17,9 @@ import { TicketStatus } from '../models/ticket-status.enum';
 import { MatchEntity } from '../entities/match.entity';
 import { TicketItemEntity } from '../entities/ticket-item.entity';
 import { UserEntity } from '../entities/user.entity';
+import { updapteUserTickets } from '../utils/update-ticket';
 
 export class MainController{
-    
     private soccerHttpClient:SoccerHttpClient;
     private userRepository:UserRepository;
     constructor() { 
@@ -122,6 +122,19 @@ export class MainController{
         }
     }
     
+    public updateUserTicketsMiddleware = async (request: Request, response:Response): Promise<any> => {
+        const { id:userId } = request.session.user!;
+        try{
+            
+            await updapteUserTickets(userId);
+            return sendResponse(response, 200, SuccessStatusCode.Success);
+        }catch(error:any){
+            console.error(error);
+            
+            return sendResponse(response, 500, ErrorStatusCode.UnknownError);
+        }
+    }
+    
     public submitTicket = async (request: Request, response:Response): Promise<any> => {
         const ticket: {selectedBets:TicketItemModel[]} = request.body.ticket;
         const ticketAmount: number = request.body.ticketAmount;
@@ -137,7 +150,7 @@ export class MainController{
             dataSource.transaction(async transactionalEntityManager => {
                 const user = await transactionalEntityManager.findOne(UserEntity, {where: {id: request.session.user!.id}})
                 if(!user) throw new Error("USER NOT FOUND!")
-                const transactionEntity = new TransactionEntity({transactionPurpose:TransactionPurpose.TICKET, value:(-1)*ticketAmount, userId: user.id})
+                const transactionEntity = new TransactionEntity({transactionPurpose:TransactionPurpose.TICKET, value:(-1)*ticketAmount, userId: user.id, user: user})
                 await transactionalEntityManager.save(transactionEntity);
                 user.balance = user.balance + transactionEntity.value;
                 await transactionalEntityManager.save(user);

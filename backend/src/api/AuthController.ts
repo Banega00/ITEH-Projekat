@@ -6,6 +6,7 @@ import { ErrorStatusCode, SuccessStatusCode } from "../utils/status-codes";
 import { sendResponse } from "../utils/wrappers/response-wrapper";
 import * as RequestModels from '../models/requests/index'
 import { UserEntity } from "../entities/user.entity";
+import { updapteUserTickets } from "../utils/update-ticket";
 
 export class AuthController{
     
@@ -24,6 +25,8 @@ export class AuthController{
 
             if(await Helpers.comparePassword(password, user.password)){
                 request.session.user = user;
+
+                await updapteUserTickets(user.id);
                 return sendResponse(response, 200, SuccessStatusCode.SuccessfulLogin)
             }else{
                 return sendResponse(response, 400, ErrorStatusCode.InvalidPassword)

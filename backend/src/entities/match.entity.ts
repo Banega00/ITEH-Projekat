@@ -1,4 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, JoinColumn, OneToOne, CreateDateColumn, PrimaryColumn } from "typeorm";
+import { MatchStatus } from "../models/match-status.enum";
+import { SingleMatchResult } from "../models/responses/match-result.response";
 import { TicketStatus } from "../models/ticket-status.enum";
 import { TicketItemEntity } from "./ticket-item.entity";
 import { TransactionEntity } from "./transaction.entity";
@@ -38,6 +40,12 @@ export class MatchEntity{
 
     @Column({nullable:true})
     SportId: number
+    
+    // @Column({type:'enum', enum: MatchStatus, default: MatchStatus.Active})
+    // matchStatus: MatchStatus
+
+    @Column({type:'jsonb', nullable: true})
+    matchResult: SingleMatchResult
     constructor(obj?:Partial<MatchEntity>) {
         if(!obj) return;
         obj.Id && (this.Id = obj.Id)
@@ -51,6 +59,8 @@ export class MatchEntity{
         obj.Status && (this.Status = obj.Status)
         obj.CompetitionId && (this.CompetitionId = obj.CompetitionId)
         obj.SportId && (this.SportId = obj.SportId)
+        obj.matchResult && (this.matchResult = obj.matchResult)
+        // obj.matchStatus && (this.matchStatus = obj.matchStatus)
         // obj.maximumWinning && (this.maximumWinning = obj.maximumWinning)
         // obj.ticketAmount && (this.ticketAmount = obj.ticketAmount)
         // obj.totalOdd && (this.totalOdd = obj.totalOdd)

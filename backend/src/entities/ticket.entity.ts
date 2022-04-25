@@ -33,8 +33,10 @@ export class TicketEntity{
     items: TicketItemEntity[]
 
     @ManyToOne(() => UserEntity, (user) => user.tickets)
-    user: UserEntity
+    user: UserEntity;
 
+
+    @Column()
     userId: number;
 
     constructor(obj?:Partial<TicketEntity>) {

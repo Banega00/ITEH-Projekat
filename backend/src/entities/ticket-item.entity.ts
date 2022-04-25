@@ -41,6 +41,10 @@ export class TicketItemEntity{
         BetGameId: number;
     }
 
+    @Column({type: 'enum', enum: TicketStatus, nullable: false, default: TicketStatus.Active})
+    status: TicketStatus;
+
+
     constructor(obj?:Partial<TicketItemEntity>) {
         if(!obj) return;
         obj.ticket && (this.ticket = obj.ticket)
@@ -50,5 +54,6 @@ export class TicketItemEntity{
         obj.name && (this.name = obj.name)
         obj.betMetadata && (this.betMetadata = obj.betMetadata)
         obj.match && (this.match = obj.match)
+        obj.status && (this.status = obj.status)
     }
 }

@@ -9,7 +9,7 @@ import { Httper } from './utils/httper';
 import { MasterDataModel, SportData } from '../../backend/src/models/soccer-bet/master-data.model'
 import { TicketItemModel, TicketModel } from './models/ticket.model'
 import CancelIcon from '@mui/icons-material/Cancel';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import Home from './components/pages/Home';
 import { SignUp } from './components/pages/SignUp';
 import { Profile } from './components/pages/Profile';
@@ -113,6 +113,8 @@ const App = () => {
             <Route path="/home" element={<Home />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="*" element={<Navigate to="/home"/>} />
+
           </Routes>
         </BrowserRouter>
       </GlobalContext.Provider>

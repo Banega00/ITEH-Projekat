@@ -4,10 +4,10 @@ import ArrowCircleLeftOutlinedIcon from '@mui/icons-material/ArrowCircleLeftOutl
 import ArrowCircleRightOutlinedIcon from '@mui/icons-material/ArrowCircleRightOutlined';
 import { Ticket } from "./Ticket";
 import { TicketStatus } from '../models/ticket-status.enum'
+import { TicketEntity } from "../../../backend/src/entities/ticket.entity";
 
-export const TicketCarousel: React.FC<{tickets:any[]}> = ({tickets}) => {
+export const TicketCarousel: React.FC<{tickets:TicketEntity[]}> = ({tickets}) => {
     const script = useScript('http://localhost:3000/ticket-carousel.script.js')
-    tickets = [{status: TicketStatus.Active}, {status: TicketStatus.Missed}, {status:TicketStatus.Successful}]
     return (
         <main className="ticket-carousel" style={{height:'95%', paddingBottom:'100px'}}>
             <div className="featured stacked-cards" style={{height:'95%'}}>

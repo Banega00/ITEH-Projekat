@@ -13,12 +13,16 @@ import LinearProgress from "@mui/material/LinearProgress"
 import OutlinedInput from "@mui/material/OutlinedInput"
 import Typography from "@mui/material/Typography"
 import moment from "moment"
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { UserProfileData } from '../../../../backend/src/models/responses/UserProfileData.response'
 import { TransactionPurpose } from "../../models/transaction-purpose.enum"
 import { Httper } from "../../utils/httper"
 import { TicketCarousel } from "../TicketCarousel"
+import LogoutIcon from '@mui/icons-material/Logout';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import GlobalContext from "../../global-context"
+import { Tooltip } from "@mui/material"
 
 const httpService = new Httper('http://localhost:3001')
 export const Profile = () => {
@@ -31,7 +35,7 @@ export const Profile = () => {
     const [cvv, setCvv] = useState('');
     const [transactionValue, setTransactionValue] = useState(0);
     const [refreshUserProfile, setRefreshUserProfile] = useState(false);
-
+    const globalContext = useContext(GlobalContext)
 
     const [transactionLinearProgress, setTransactionLinearProgress] = useState(false);
 
@@ -39,18 +43,18 @@ export const Profile = () => {
 
     const navigate = useNavigate();
 
-    const validateCardNumber = (cardNumber:string) => {
+    const validateCardNumber = (cardNumber: string) => {
         let length = 0;
         for (var i = 0; i < cardNumber.length; i++) {
-            if(cardNumber.charAt(i) == ' '){
+            if (cardNumber.charAt(i) == ' ') {
             }
-            else if(!isNaN(+cardNumber.charAt(i))){
+            else if (!isNaN(+cardNumber.charAt(i))) {
                 length++;
-            }else{
+            } else {
                 return 'Only digits are allowed in card number'
             }
-          }
-        if(length!=16) return 'Card Number has to be 16 characters long'
+        }
+        if (length != 16) return 'Card Number has to be 16 characters long'
         return '';
     }
 
@@ -62,89 +66,99 @@ export const Profile = () => {
         }
     }
 
-    const payin = () =>{
-        if(transactionValue <= 0){
+    const payin = () => {
+        if (transactionValue <= 0) {
             alert('Transaction amount must be greater than 0')
             return;
         }
         const validationMessage = validateCardNumber(cardNumber)
-        if(validationMessage){
+        if (validationMessage) {
             alert(validationMessage)
             return;
         }
-        if(cardNumber && expiryDate && cvv){
+        if (cardNumber && expiryDate && cvv) {
             setTransactionLinearProgress(true)
 
-            httpService.makeTransaction({transactionPurpose: TransactionPurpose.PAYIN, value: transactionValue})
-            .then(response=>{
-                if(response.status==200){
-                    setTimeout(
-                        function() {
-                            setRefreshUserProfile(!refreshUserProfile)
-                            setDialogState({ ...dialogsState, payInDialog: false })
-                            setTransactionLinearProgress(false)
-                        }
-                        .bind(this),
-                        2000
-                    );
-                }else{
+            httpService.makeTransaction({ transactionPurpose: TransactionPurpose.PAYIN, value: transactionValue })
+                .then(response => {
+                    if (response.status == 200) {
+                        setTimeout(
+                            function () {
+                                setRefreshUserProfile(!refreshUserProfile)
+                                setDialogState({ ...dialogsState, payInDialog: false })
+                                setTransactionLinearProgress(false)
+                            }
+                                .bind(this),
+                            2000
+                        );
+                    } else {
+                        alert("Error making transaction")
+                        console.log(response)
+                    }
+                })
+                .catch(error => {
                     alert("Error making transaction")
-                    console.log(response)
-                }
-            })
-            .catch(error=>{
-                alert("Error making transaction")
-                console.log(error)
-            })
-        }else{
+                    console.log(error)
+                })
+        } else {
             alert("Invalid card information")
             setDialogState({ ...dialogsState, payInDialog: false })
         }
     }
 
-    const withdraw = () =>{
-        if(transactionValue <= 0){
+    const withdraw = () => {
+        if (transactionValue <= 0) {
             alert('Transaction amount must be greater than 0')
             return;
         }
         const validationMessage = validateCardNumber(cardNumber)
-        if(validationMessage){
+        if (validationMessage) {
             alert(validationMessage)
             return;
         }
-        if(userProfileData && transactionValue > userProfileData.balance){
+        if (userProfileData && transactionValue > (+userProfileData._balance)) {
             alert('Not enough money to withdraw this amount')
             return;
         }
-        if(cardNumber){
+        if (cardNumber) {
             setTransactionLinearProgress(true)
 
-            httpService.makeTransaction({transactionPurpose: TransactionPurpose.WITHDRAW, value: transactionValue - 2*transactionValue})
-            .then(response=>{
-                if(response.status==200){
-                    setTimeout(
-                        function() {
-                            setRefreshUserProfile(!refreshUserProfile)
-                            setDialogState({ ...dialogsState, withdrawDialog: false })
-                            setTransactionLinearProgress(false)
-                        }
-                        .bind(this),
-                        2000
-                    );
-                }else{
+            httpService.makeTransaction({ transactionPurpose: TransactionPurpose.WITHDRAW, value: transactionValue - 2 * transactionValue })
+                .then(response => {
+                    if (response.status == 200) {
+                        setTimeout(
+                            function () {
+                                setRefreshUserProfile(!refreshUserProfile)
+                                setDialogState({ ...dialogsState, withdrawDialog: false })
+                                setTransactionLinearProgress(false)
+                            }
+                                .bind(this),
+                            2000
+                        );
+                    } else {
+                        alert("Error making transaction")
+                        console.log(response)
+                    }
+                })
+                .catch(error => {
                     alert("Error making transaction")
-                    console.log(response)
-                }
-            })
-            .catch(error=>{
-                alert("Error making transaction")
-                console.log(error)
-            })
+                    console.log(error)
+                })
 
-        }else{
+        } else {
             alert("Invalid card information")
             setDialogState({ ...dialogsState, withdrawDialog: false })
         }
+    }
+
+    const logout = () => {
+        httpService.logout().then(response => {
+            globalContext.setUser(undefined)
+            navigate('/home')
+        }).catch(error => {
+            globalContext.setUser(undefined)
+            navigate('/home')
+        });
     }
 
     useEffect(() => {
@@ -164,10 +178,16 @@ export const Profile = () => {
     return (
         <div>
             {userProfileData ? <Box>
-                <Card elevation={24}>
+                <Card elevation={24} sx={{ display: 'flex', p: 1 }}>
                     <Typography variant='h2' color={'primary'}>
                         PROFILE
                     </Typography>
+                    <Button onClick={() => navigate('/home')} variant="contained" sx={{ marginLeft: 'auto', color: 'white', marginRight: '10px' }} endIcon={<EmojiEventsIcon />}>
+                        Matches
+                    </Button>
+                    <Button onClick={logout} variant="contained" sx={{ color: 'white' }} endIcon={<LogoutIcon />}>
+                        Log out
+                    </Button>
                 </Card>
                 <Box sx={{ height: '600px', display: 'flex' }}>
                     <Box sx={{ p: 2, flex: 1 }}>
@@ -207,7 +227,7 @@ export const Profile = () => {
                         <Typography variant='h3' color={'primary'}>
                             Tickets
                         </Typography>
-                        <TicketCarousel tickets={[undefined]} />
+                        <TicketCarousel tickets={userProfileData.tickets} />
 
                     </Box>
                     <Divider sx={{ flex: 0, height: '90%', margin: 'auto', borderRightWidth: 2 }} orientation='vertical' />
@@ -217,7 +237,7 @@ export const Profile = () => {
                             Balance
                         </Typography>
                         <Typography variant='h2' sx={{ color: 'black', textAlign: 'center', p: 2 }}>
-                            {`${userProfileData.balance.toFixed(2)}$`}
+                            {`${(+userProfileData._balance).toFixed(2)}$`}
                         </Typography>
 
                         <Box sx={{ widht: '100%', display: 'flex' }}>
@@ -235,9 +255,9 @@ export const Profile = () => {
                                 return (
                                     <Card sx={{ display: 'flex', mb: 1, width: '100%', backgroundColor: 'lightgray' }}>
                                         <Box sx={{ width: '100%' }}>
-                                            <Box sx={{ backgroundColor: transaction.value > 0 ? 'primary.light' : 'error.light', p: 1, pb: 0 }}>{moment(transaction.date).format('DD.MM.yyyy - HH:mm')}</Box>
-                                            <Box sx={{ backgroundColor: transaction.value > 0 ? 'primary.light' : 'error.light', p: 1, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
-                                                <Box sx={{ color: 'white', fontSize: '1.5em' }}>{transaction.value.toFixed(2)}$</Box>
+                                            <Box sx={{ backgroundColor: transaction._value > 0 ? 'primary.light' : 'error.light', p: 1, pb: 0 }}>{moment(transaction.date).format('DD.MM.yyyy - HH:mm')}</Box>
+                                            <Box sx={{ backgroundColor: transaction._value > 0 ? 'primary.light' : 'error.light', p: 1, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
+                                                <Box sx={{ color: 'white', fontSize: '1.5em' }}>{(+transaction._value).toFixed(2)}$</Box>
                                                 <Box sx={{ fontSize: '1.2em', marginLeft: 'auto', mr: 2 }}>{transaction.transactionPurpose}</Box>
                                             </Box>
                                         </Box>
@@ -262,7 +282,7 @@ export const Profile = () => {
                     <Box>
                         <Divider />
 
-                        <FormControl sx={{ mt:1, mb:1, width: '100%' }} variant="outlined">
+                        <FormControl sx={{ mt: 1, mb: 1, width: '100%' }} variant="outlined">
                             <InputLabel htmlFor="transaction-value-input">Amount</InputLabel>
                             <OutlinedInput
                                 id="transaction-value-input"
@@ -274,7 +294,7 @@ export const Profile = () => {
                             />
                         </FormControl>
 
-                        <FormControl sx={{ mt:1, mb:1, width: '100%' }} variant="outlined">
+                        <FormControl sx={{ mt: 1, mb: 1, width: '100%' }} variant="outlined">
                             <InputLabel htmlFor="card-number-input">Card number</InputLabel>
                             <OutlinedInput
                                 id="card-number-input"
@@ -286,7 +306,7 @@ export const Profile = () => {
                             />
                         </FormControl>
 
-                        <FormControl sx={{ mt:1, mb:1, width: '100%' }} variant="outlined">
+                        <FormControl sx={{ mt: 1, mb: 1, width: '100%' }} variant="outlined">
                             <InputLabel htmlFor="expiry-date-input">Expiry date</InputLabel>
                             <OutlinedInput
                                 id="expiry-date-input"
@@ -298,7 +318,7 @@ export const Profile = () => {
                             />
                         </FormControl>
 
-                        <FormControl sx={{ mt:1, mb:1, width: '100%' }} variant="outlined">
+                        <FormControl sx={{ mt: 1, mb: 1, width: '100%' }} variant="outlined">
                             <InputLabel htmlFor="cvv-input">CVC/CVV</InputLabel>
                             <OutlinedInput
                                 id="cvv-input"
@@ -309,7 +329,7 @@ export const Profile = () => {
                                 label="CVC/CVV"
                             />
                         </FormControl>
-                        <LinearProgress sx={{display: transactionLinearProgress ? 'block' : 'none' }} color="success" />
+                        <LinearProgress sx={{ display: transactionLinearProgress ? 'block' : 'none' }} color="success" />
                     </Box>
                 </DialogContent>
                 <DialogActions>
@@ -326,7 +346,7 @@ export const Profile = () => {
                     </DialogContentText>
                     <Box>
                         <Divider />
-                        <FormControl sx={{ mt:1, mb:1, width: '100%' }} variant="outlined">
+                        <FormControl sx={{ mt: 1, mb: 1, width: '100%' }} variant="outlined">
                             <InputLabel htmlFor="transaction-value-input">Amount</InputLabel>
                             <OutlinedInput
                                 id="transaction-value-input"
@@ -337,7 +357,7 @@ export const Profile = () => {
                                 label="Card Number"
                             />
                         </FormControl>
-                        <FormControl sx={{ mt:1, mb:1, width: '100%' }} variant="outlined">
+                        <FormControl sx={{ mt: 1, mb: 1, width: '100%' }} variant="outlined">
                             <InputLabel htmlFor="card-number-input">Card number</InputLabel>
                             <OutlinedInput
                                 id="card-number-input"
@@ -348,7 +368,7 @@ export const Profile = () => {
                                 label="Card Number"
                             />
                         </FormControl>
-                        <LinearProgress sx={{display: transactionLinearProgress ? 'block' : 'none' }} color="success" />
+                        <LinearProgress sx={{ display: transactionLinearProgress ? 'block' : 'none' }} color="success" />
                     </Box>
                 </DialogContent>
                 <DialogActions>

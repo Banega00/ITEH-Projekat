@@ -6,6 +6,7 @@ import { UserProfileData } from '../../../backend/src/models/responses/UserProfi
 import { TransactionPurpose } from '../../../backend/src/models/transaction-purpose.enum';
 import { TicketItemModel } from '../models/ticket.model';
 export class Httper {
+    
 
 
     private baseUrl: string;
@@ -85,6 +86,11 @@ export class Httper {
 
     public submitTicket = async (ticket: { selectedBets: TicketItemModel[] }, ticketAmount: number) => {
         const response = await this.post('/submit-ticket', { ticket, ticketAmount })
+        return response;
+    }
+
+    public logout = async () => {
+        const response = await this.get('/logout');
         return response;
     }
 }

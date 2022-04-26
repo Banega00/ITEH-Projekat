@@ -201,7 +201,7 @@ const Home = () => {
           <DialogTitle>Submit a ticket</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              Your balance is {globalContext.user.balance.toFixed(2)}$
+              Your balance is {(+globalContext.user.balance).toFixed(2)}$
             </DialogContentText>
             <Box>
               <Divider />

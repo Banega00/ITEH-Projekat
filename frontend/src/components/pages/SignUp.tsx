@@ -74,6 +74,18 @@ export const SignUp: React.FC = () => {
     setOpenSnackbar(false);
   }
 
+  const continueAsGuest = () =>{
+    httpService.logout().then(response =>{
+      console.log(response);
+      globalContext.setUser(undefined);
+      navigate('/home')
+    }).catch(error=>{
+      console.log(error);
+      globalContext.setUser(undefined);
+      navigate('/home')
+    });
+  }
+
   const getUserData = async () => httpService.getUserData();
 
   const registerUser = async () => {
@@ -228,9 +240,9 @@ export const SignUp: React.FC = () => {
           {snackabarMessage}
         </Alert>
       </Snackbar>
+      <Button onClick={continueAsGuest} sx={{ margin:'auto', marginTop: '20px', left:'50%', transform:'translateX(-50%)', p: 2, color: 'white' }} variant='contained'>Continue as Guest</Button>
+
     </>
-
-
   );
 }
 

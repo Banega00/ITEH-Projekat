@@ -9,8 +9,14 @@ export class TransactionEntity{
     @PrimaryGeneratedColumn()
     id:number;
 
-    @Column({nullable: false})
-    value: number;
+    @Column({ nullable: true, name: 'value', type: 'numeric' })
+    public _value: number;
+    public get value(): number {
+        return (+this._value);
+    }
+    public set value(value: number) {
+        this._value = value;
+    }
 
     @Column({type: 'enum', enum: TransactionPurpose, nullable: false})
     transactionPurpose: TransactionPurpose;

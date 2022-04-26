@@ -1,3 +1,4 @@
+import { IsNull, LessThan } from "typeorm";
 import { MatchEntity } from "../entities/match.entity";
 import { TicketItemEntity } from "../entities/ticket-item.entity";
 import { TicketEntity } from "../entities/ticket.entity";
@@ -20,16 +21,36 @@ export const calculateTicketItemResult = (ticketItem: TicketItemEntity) =>{
         //domacin pobedjuje
         if(matchResult.d_k > matchResult.g_k){
             ticketItem.status = TicketStatus.Successful
+        }else{
+            ticketItem.status = TicketStatus.Missed
         }
     }else if(ticketItem.name == 'X' && ticketItem.codeForPrinting == 'KI X'){
         //nereseno
         if(matchResult.d_k == matchResult.g_k){
             ticketItem.status = TicketStatus.Successful
+        }else{
+            ticketItem.status = TicketStatus.Missed
         }
     }else if(ticketItem.name == '2' && ticketItem.codeForPrinting == 'KI 2'){
         //gost pobedjuje
         if(matchResult.d_k < matchResult.g_k){
             ticketItem.status = TicketStatus.Successful
+        }else{
+            ticketItem.status = TicketStatus.Missed
+        }
+    }else if(ticketItem.name == '0-2' && ticketItem.codeForPrinting == 'UG 0-2'){
+        //gost pobedjuje
+        if(matchResult.d_k + matchResult.g_k <= 2){
+            ticketItem.status = TicketStatus.Successful
+        }else{
+            ticketItem.status = TicketStatus.Missed
+        }
+    }else if(ticketItem.name == '3+' && ticketItem.codeForPrinting == 'UG 3+'){
+        //gost pobedjuje
+        if(matchResult.d_k + matchResult.g_k >= 3){
+            ticketItem.status = TicketStatus.Successful
+        }else{
+            ticketItem.status = TicketStatus.Missed
         }
     }
 }
@@ -64,9 +85,14 @@ export const updapteUserTickets = async (userId: UserEntity['id']) =>{
                 updateTicket(ticket);
                 if(ticket.status == TicketStatus.Successful){
                     const transaction = new TransactionEntity({transactionPurpose:TransactionPurpose.TICKET, user: user, value: ticket.ticketAmount * ticket.totalOdd})
+                    user.balance+=transaction.value;
+                    await transactionalEntityManager.save(user);
                     await transactionalEntityManager.save(transaction)
                 }
                 await ticketRepository.saveTicket(ticket, transactionalEntityManager)
+                for(const ticketItem of ticket.items){
+                    await transactionalEntityManager.save(ticketItem);
+                }
             }
         })
 
@@ -84,7 +110,7 @@ export const updateFinishedMatches = async() =>{
         const httpService = new Httper('https://rezultati.soccerbet.rs')
         const uniqueDays:Date[] = [];
         dataSource.transaction(async transactionalEntityManager => {
-            const unfinishedMatches = await transactionalEntityManager.find(MatchEntity, {where: {matchResult: undefined}})
+            const unfinishedMatches = await transactionalEntityManager.find(MatchEntity, {where: {matchResult: IsNull(), StartDate: LessThan(new Date())}})
         
             for(const match of unfinishedMatches){
                 const dayExists = uniqueDays.some(day => {
@@ -106,6 +132,7 @@ export const updateFinishedMatches = async() =>{
                         const match = unfinishedMatches.find(match => match.Code == matchResult.sifra);
                         if(match){
                             match.matchResult = matchResult
+                            await transactionalEntityManager.save(match);
                         }
                     }
                 }

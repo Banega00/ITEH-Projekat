@@ -20,8 +20,15 @@ export class UserEntity{
     @Column('varchar')
     email: string;
 
-    @Column({default:0})
-    balance: number;
+    @Column({ default: 0, name: 'balance', type: 'numeric' })
+    public _balance: number;
+
+    public get balance(): number {
+        return (+this._balance);
+    }
+    public set balance(value: number) {
+        this._balance = value;
+    }
 
     @OneToMany(() => TransactionEntity, transaction => transaction.user)
     transactions: TransactionEntity[];

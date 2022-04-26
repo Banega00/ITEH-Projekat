@@ -6,6 +6,7 @@ import { env } from './src/utils/wrappers/env-wrapper';
 import app from "./src/app";
 import { dataSource, setupConnection } from "./src/repository/db-connection";
 import { updateFinishedMatches } from "./src/utils/update-ticket";
+import { UserEntity } from "./src/entities/user.entity";
 
 
 
@@ -19,12 +20,13 @@ import { updateFinishedMatches } from "./src/utils/update-ticket";
 
         await setupConnection();
         console.log(`Connected to database successfully! 💾`)
+
         //Starting server
         app.listen(PORT);
         console.log(`Server is listening on port ${PORT} 🔥🔥🔥`)
 
         updateFinishedMatches()
-
+        setInterval(updateFinishedMatches,10*60*1000)//every 10 mins
     } catch (error) {
         console.log(error);
         process.exit(-1);

@@ -18,8 +18,15 @@ export class TicketItemEntity{
     @Column({nullable: false})
     name: string;
 
-    @Column({nullable: false, type:'decimal'})
-    odd: number;
+    @Column({name:'odd', nullable: false, type: 'numeric' })
+    public _odd: number;
+
+    public get odd(): number {
+        return (+this._odd);
+    }
+    public set odd(value: number) {
+        this._odd = value;
+    }
 
     @Column({nullable: false})
     codeForPrinting: string;
@@ -43,6 +50,8 @@ export class TicketItemEntity{
 
     @Column({type: 'enum', enum: TicketStatus, nullable: false, default: TicketStatus.Active})
     status: TicketStatus;
+
+
 
 
     constructor(obj?:Partial<TicketItemEntity>) {

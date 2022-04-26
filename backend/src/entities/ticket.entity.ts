@@ -13,14 +13,32 @@ export class TicketEntity{
     @CreateDateColumn()
     date: Date;
 
-    @Column({nullable: false, type:'decimal'})
-    totalOdd: number;
+    @Column({name:'totalOdd', nullable: false, type: 'numeric' })
+    public _totalOdd: number;
+    public get totalOdd(): number {
+        return (+this._totalOdd);
+    }
+    public set totalOdd(value: number) {
+        this._totalOdd = value;
+    }
 
-    @Column({nullable: false, type:'decimal'})
-    ticketAmount: number;
+    @Column({name:'ticketAmount', nullable: false, type: 'numeric' })
+    public _ticketAmount: number;
+    public get ticketAmount(): number {
+        return (+this._ticketAmount);
+    }
+    public set ticketAmount(value: number) {
+        this._ticketAmount = value;
+    }
 
-    @Column({nullable: false, type:'decimal'})
-    maximumWinning: number;
+    @Column({name:'maximumWinning', nullable: false, type: 'numeric' })
+    public _maximumWinning: number;
+    public get maximumWinning(): number {
+        return (+this._maximumWinning);
+    }
+    public set maximumWinning(value: number) {
+        this._maximumWinning = value;
+    }
 
     @Column({type: 'enum', enum: TicketStatus, nullable: false, default: TicketStatus.Active})
     status: TicketStatus;

@@ -129,7 +129,11 @@ export const updateFinishedMatches = async() =>{
     
                 for(const sportKey in resultResponse.mec_zavrsenos){
                     for(const matchResult of resultResponse.mec_zavrsenos[sportKey]){
-                        const match = unfinishedMatches.find(match => match.Code == matchResult.sifra);
+                        let match = unfinishedMatches.find(match => match.Code == matchResult.sifra);
+
+                        if(!match){
+                            match = unfinishedMatches.find(match => matchResult.domacin == match.HomeCompetitorName && matchResult.gost == match.AwayCompetitorName && match.ExternalId == matchResult.betradar_id)
+                        }
                         if(match){
                             match.matchResult = matchResult
                             await transactionalEntityManager.save(match);

@@ -2,10 +2,10 @@ import { EntityManager, Repository } from "typeorm";
 import { TransactionEntity } from "../entities/transaction.entity";
 import { UserEntity } from "../entities/user.entity";
 import { TransactionPurpose } from "../models/transaction-purpose.enum";
-import { dataSource } from "./db-connection";
+import { UserRole } from "../models/user-role.enum";
+import dataSource from "./db-connection";
 
 export class UserRepository{
-
     userRepository: Repository<UserEntity>;
     constructor() {
         this.userRepository = dataSource.getRepository<UserEntity>(UserEntity)        
@@ -15,6 +15,16 @@ export class UserRepository{
         if(entityManager) return await entityManager.findOne(UserEntity, {where:criteria});
         return await this.userRepository.findOne({where:criteria})
         // return await connectionTool.find(UserEntity, {where:criteria});
+    }
+
+    async getUsers(entityManager?:EntityManager){
+        if(entityManager) return await entityManager.find(UserEntity, {where:{role: UserRole.USER}});
+        return await this.userRepository.find({where:{role: UserRole.USER}});
+    }
+
+    async getUserCount(entityManager?:EntityManager){
+        const manager = entityManager ?? this.userRepository.manager;
+        return await manager.count(UserEntity, {where:{role: UserRole.USER}})
     }
 
     async addUser(user: UserEntity, entityManager?:EntityManager){

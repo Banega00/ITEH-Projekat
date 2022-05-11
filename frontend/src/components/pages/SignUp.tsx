@@ -16,6 +16,7 @@ import Alert from '@mui/material/Alert';
 import { useNavigate } from 'react-router-dom';
 import GlobalContext from '../../global-context';
 import { useContext } from 'react'
+import { UserRole } from '../../models/user-role.enum';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -98,7 +99,7 @@ export const SignUp: React.FC = () => {
       } else {
         getUserData().then(response => {
           globalContext.setUser(response.payload)
-          navigate('/home')
+          navigate('/profile')
         }).catch(error => {
           console.log(error)
           setSnackbarMessage("Unexpected error")
@@ -122,7 +123,11 @@ export const SignUp: React.FC = () => {
       } else {
         getUserData().then(response => {
           globalContext.setUser(response.payload)
-          navigate('/home')
+          if(response.payload.role == UserRole.ADMIN){
+            navigate('/dashboard')
+          }else{
+            navigate('/home')
+          } 
         }).catch(error => {
           console.log(error)
           setSnackbarMessage("Unexpected error")

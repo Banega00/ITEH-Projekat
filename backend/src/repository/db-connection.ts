@@ -7,7 +7,7 @@ import { UserEntity } from "../entities/user.entity"
 import { env } from "../utils/wrappers/env-wrapper"
 
 
-export const dataSource = new DataSource({
+const dataSource = new DataSource({
     type: "postgres",
     host: env.pg.host,
     port: env.pg.port,
@@ -17,7 +17,7 @@ export const dataSource = new DataSource({
     synchronize: env.orm.synchronize,
     logging: env.orm.logging,
     entities: [UserEntity, TransactionEntity, TicketEntity, TicketItemEntity, MatchEntity],
-    installExtensions: true
+    installExtensions: true,
 })
 
-export const setupConnection = async () => await dataSource.initialize()
+export default dataSource;

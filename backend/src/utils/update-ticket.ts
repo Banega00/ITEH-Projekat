@@ -6,7 +6,7 @@ import { TransactionEntity } from "../entities/transaction.entity";
 import { UserEntity } from "../entities/user.entity"
 import { TicketStatus } from "../models/ticket-status.enum";
 import { TransactionPurpose } from "../models/transaction-purpose.enum";
-import { dataSource } from "../repository/db-connection";
+import dataSource from "../repository/db-connection";
 import { TicketRepository } from "../repository/ticket.repository";
 import { UserRepository } from "../repository/user-repository"
 import { Httper } from "./http-clients/httper";

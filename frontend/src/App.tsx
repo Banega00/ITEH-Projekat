@@ -15,6 +15,7 @@ import { SignUp } from './components/pages/SignUp';
 import { Profile } from './components/pages/Profile';
 import { TicketCarousel } from './components/TicketCarousel';
 import GlobalContext from './global-context';
+import { AdminDashboard } from './components/pages/Admin-Dashboard';
 
 declare module '@mui/material/styles' {
   interface Theme {
@@ -84,7 +85,7 @@ const App = () => {
         masterData.CompetitionsData.Sports = masterData.CompetitionsData.Sports.filter(sport => sport.Id > 0);
 
         setMasterData(masterData);
-        setSelectedSport(masterData.CompetitionsData.Sports[0])
+        if(!selectedSport) setSelectedSport(masterData.CompetitionsData.Sports[0])
       })
       .catch((error) => {
         console.log(error)
@@ -113,6 +114,7 @@ const App = () => {
             <Route path="/home" element={<Home />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/dashboard" element={<AdminDashboard />} />
             <Route path="*" element={<Navigate to="/home"/>} />
 
           </Routes>

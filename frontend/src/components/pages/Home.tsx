@@ -66,9 +66,8 @@ const Home = () => {
 
   useEffect(()=>{
     setInterval(()=>{
-      console.log("OVDE")
       globalContext.setRefreshGlobalContext(!globalContext.refreshGlobalContext)
-    },20000) //fetch master data every 20 sec
+    },60000) //fetch master data every 20 sec
   },[])
   
 
@@ -78,18 +77,25 @@ const Home = () => {
       return;
     }
     if(!globalContext.user || !ticketAmount) return;
-    if(ticketAmount > globalContext.user.balance){
-      alert('Insufficient money')
+    if(ticketAmount > globalContext.user.balance || !globalContext.user.balance){
+      alert('You don`t have enough money to submit ticket\nPay in money first')
+      setTicketDialogState(false)
     }else{
       const httpService = new Httper('http://localhost:3001');
       httpService.submitTicket(globalContext.ticket, ticketAmount).then(response =>{
-        console.log(response);
         if(response.status==200){
           alert('Successfully submited ticket');
           globalContext.setTicket({selectedBets:[]});
         }else{
-          console.log(response);
-          alert('Unexpected error')
+          
+          console.log(response.statusCode)
+          if(response.statusCode == 10008){
+            console.log(response);
+            alert('You don`t have enough money to submit ticket\nPay in money first')
+          }else{
+            console.log(response);
+            alert('Unexpected error')
+          }
         }
       }).catch(error=>{
         console.log(error);
@@ -201,7 +207,7 @@ const Home = () => {
           <DialogTitle>Submit a ticket</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              Your balance is {(+globalContext.user.balance).toFixed(2)}$
+              Your balance is {globalContext.user.balance ? (+globalContext.user.balance).toFixed(2) : new Number(0).toFixed(2)}$
             </DialogContentText>
             <Box>
               <Divider />

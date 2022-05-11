@@ -9,7 +9,7 @@ import { sendResponse } from "../utils/wrappers/response-wrapper";
 import { UserProfileData } from '../models/responses/UserProfileData.response';
 import { UserRepository } from '../repository/user-repository';
 import { TicketItemModel } from '../../../frontend/src/models/ticket.model'
-import { dataSource } from '../repository/db-connection';
+import dataSource from '../repository/db-connection';
 import { TicketEntity } from '../entities/ticket.entity';
 import { TransactionEntity } from '../entities/transaction.entity';
 import { TransactionPurpose } from '../models/transaction-purpose.enum';
@@ -25,7 +25,6 @@ export class MainController{
     constructor() { 
         this.soccerHttpClient = new SoccerHttpClient();
         this.userRepository = new UserRepository();
-        const a = 10;
     }
 
     public healt = async (request: Request, response:Response, next:NextFunction): Promise<any> =>{
@@ -143,7 +142,7 @@ export class MainController{
         }
 
         try{
-            if(ticketAmount >= request.session.user.balance){
+            if(ticketAmount > request.session.user.balance || !request.session.user.balance){
                return sendResponse(response, 400, ErrorStatusCode.InsufficientMoney);
             }
 

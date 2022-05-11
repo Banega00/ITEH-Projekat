@@ -2,6 +2,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import bcrypt from 'bcrypt'
 import { TransactionEntity } from "./transaction.entity";
 import { TicketEntity } from "./ticket.entity";
+import { UserRole } from "../models/user-role.enum";
 @Entity()
 export class UserEntity{
 
@@ -19,6 +20,9 @@ export class UserEntity{
 
     @Column('varchar')
     email: string;
+
+    @Column({type: 'enum', enum: UserRole, default:UserRole.USER})
+    role: string;
 
     @Column({ default: 0, name: 'balance', type: 'numeric' })
     public _balance: number;

@@ -18,8 +18,8 @@ const httper = new Httper("http://localhost:3001")
 
 export const SportMatches: React.FC<{ sport: SportData, sportCompetitions: CompetitionData[], countries: CountryData[] }> =
     ({ sport, sportCompetitions, countries }) => {
-        const [selectedCountry, setSelectedCountry] = useState<CountryData>()
-        const [selectedCompetition, setSelectedCompetition] = useState<CompetitionData>()
+        const [selectedCountry, setSelectedCountry] = useState<CountryData | undefined>(() => countries.find(country => country.Name == 'Evropa' && country.ShortName == 'EU'))
+        const [selectedCompetition, setSelectedCompetition] = useState<CompetitionData | undefined>(() => sportCompetitions.find(competition => competition.Name == 'Liga Sampiona' && competition.ShortName == 'UEFALS' ))
         const [filteredCompetitions, setFilteredCompetitions] = useState<CompetitionData[]>(() => [])//only country-specific competitions
         const [matches, setMatches] = useState<MatchModel[]>();
         const changeCountry = (event: SelectChangeEvent) => {
@@ -33,9 +33,22 @@ export const SportMatches: React.FC<{ sport: SportData, sportCompetitions: Compe
         };
 
         useEffect(() => {
+            setSelectedCountry(countries.find(country => country.Name == 'Evropa' && country.ShortName == 'EU'))
+            setSelectedCompetition(sportCompetitions.find(competition => competition.Name == 'Liga Sampiona' && competition.ShortName == 'UEFALS'))
+            if (!selectedCompetition) return;
+            
+            const getMatchesForCompetition = async (selectedCompetition: CompetitionData) => httper.getMatchesForCompetition(selectedCompetition)
+
+            getMatchesForCompetition(selectedCompetition)
+                .then(matches => setMatches(matches))
+                .catch(console.log)
+        },[])
+
+        useEffect(() => {
+            
             return () => {//referesh competitions every time sport changes and competitions that has matches
-                if (!selectedCountry) return;
-                setSelectedCompetition(undefined)
+                    if (!selectedCountry) return;
+                    setSelectedCompetition(undefined)
                 setFilteredCompetitions(sportCompetitions.filter(competition => competition.CountryId == selectedCountry.Id && competition.Matches && competition.Matches > 0))
             };
         }, [sport]);

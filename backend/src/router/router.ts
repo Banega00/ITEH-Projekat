@@ -1,4 +1,5 @@
 import { Request, Response, Router } from "express";
+import { AdminController } from "../api/AdminController";
 import { AuthController } from "../api/AuthController";
 import { MainController } from "../api/MainController";
 import { SuccessStatusCode } from "../utils/status-codes";
@@ -6,8 +7,14 @@ import { sendResponse } from "../utils/wrappers/response-wrapper";
 
 const mainController = new MainController();
 const authController = new AuthController();
+const adminController = new AdminController();
 
 export const router = Router()
+
+
+//Admin routes
+router.get('/users', authController.adminAuthMiddleware, adminController.getUsers)
+router.get('/stats', authController.adminAuthMiddleware, adminController.getStats)
 
 //Auth routes
 router.post('/login', authController.login)
@@ -33,3 +40,4 @@ router.post('/make-transaction', authController.authMiddleware, mainController.m
 router.post('/submit-ticket', authController.authMiddleware, mainController.submitTicket);
 
 router.get('/update-user-tickets', authController.authMiddleware, mainController.updateUserTicketsMiddleware)
+

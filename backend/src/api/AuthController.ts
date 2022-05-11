@@ -7,6 +7,7 @@ import { sendResponse } from "../utils/wrappers/response-wrapper";
 import * as RequestModels from '../models/requests/index'
 import { UserEntity } from "../entities/user.entity";
 import { updapteUserTickets } from "../utils/update-ticket";
+import { UserRole } from "../models/user-role.enum";
 
 export class AuthController{
     
@@ -66,6 +67,11 @@ export class AuthController{
         return sendResponse(response, 401, ErrorStatusCode.Unauthorized)
     }
 
+    adminAuthMiddleware = async (request: Request<{},{},RequestModels.Register>, response: Response, next: NextFunction)=>{
+        if(this.isAuthenticated(request) && this.isAdmin(request)) return next();
+        return sendResponse(response, 401, ErrorStatusCode.Unauthorized)
+    }
+
     getUserData = async (request: Request, response: Response, next: NextFunction)=>{
         const user = request.session.user;
         if(user) user.password = ''
@@ -74,5 +80,9 @@ export class AuthController{
 
     private isAuthenticated(request: Request){
         return request.session.user != undefined
+    }
+
+    private isAdmin(request: Request){
+        return request.session.user?.role == UserRole.ADMIN
     }
 }

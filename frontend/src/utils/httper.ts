@@ -5,6 +5,7 @@ import * as RequestModels from '../../../backend/src/models/requests/register.re
 import { UserProfileData } from '../../../backend/src/models/responses/UserProfileData.response';
 import { TransactionPurpose } from '../../../backend/src/models/transaction-purpose.enum';
 import { TicketItemModel } from '../models/ticket.model';
+import { UserEntity } from '../../../backend/src/entities/user.entity';
 export class Httper {
     
 
@@ -75,7 +76,7 @@ export class Httper {
     }
 
     public getUserData = async () => {
-        const response = await this.get('/userData');
+        const response = await this.get<UserEntity>('/userData');
         return response;
     }
 
@@ -92,5 +93,15 @@ export class Httper {
     public logout = async () => {
         const response = await this.get('/logout');
         return response;
+    }
+
+    public getUsers = async () => {
+        const response = await this.get<UserEntity[]>('/users')
+        return response
+    }
+
+    public getStats = async () => {
+        const response = await this.get<any>('/stats')
+        return response
     }
 }

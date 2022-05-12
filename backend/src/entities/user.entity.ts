@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt'
 import { TransactionEntity } from "./transaction.entity";
 import { TicketEntity } from "./ticket.entity";
 import { UserRole } from "../models/user-role.enum";
+import { UserAccountStatus } from "../models/user-account-status.enums";
 @Entity()
 export class UserEntity{
 
@@ -20,6 +21,9 @@ export class UserEntity{
 
     @Column('varchar')
     email: string;
+
+    @Column({type:'enum', enum:UserAccountStatus, default:UserAccountStatus.ACTIVE})
+    accountStatus: string;
 
     @Column({type: 'enum', enum: UserRole, default:UserRole.USER})
     role: string;

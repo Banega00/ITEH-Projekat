@@ -7,9 +7,6 @@ import { TransactionPurpose } from '../../../backend/src/models/transaction-purp
 import { TicketItemModel } from '../models/ticket.model';
 import { UserEntity } from '../../../backend/src/entities/user.entity';
 export class Httper {
-    
-
-
     private baseUrl: string;
 
     constructor(baseUrl: string) {
@@ -39,6 +36,20 @@ export class Httper {
     private get = async <T>(route: string, options?: any): Promise<ResponseModel<T>> => {
         const response = await fetch(this.baseUrl + route, {
             method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            ...options
+        })
+
+        return await response.json();
+    }
+    
+    private put = async <T>(route: string, options?: any): Promise<ResponseModel<T>> => {
+        const response = await fetch(this.baseUrl + route, {
+            method: 'PUT',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
@@ -100,8 +111,23 @@ export class Httper {
         return response
     }
 
+    public getUserDataAdmin = async (user: UserEntity) => {
+        const response = await this.get<UserEntity>(`/user/${user.id}`)
+        return response
+    }
+
     public getStats = async () => {
         const response = await this.get<any>('/stats')
+        return response
+    }
+    
+    public blockUser = async (userId:number) => {
+        const response = await this.put<any>(`/block/${userId}`)
+        return response
+    }
+
+    public unblockUser = async (userId:number) => {
+        const response = await this.put<any>(`/unblock/${userId}`)
         return response
     }
 }

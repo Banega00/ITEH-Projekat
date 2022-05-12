@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { UserAccountStatus } from "../models/user-account-status.enums";
 import { TicketRepository } from "../repository/ticket.repository";
 import { UserRepository } from "../repository/user-repository";
 import { ErrorStatusCode, SuccessStatusCode } from "../utils/status-codes";
@@ -16,6 +17,43 @@ export class AdminController{
         try{
             const users = await this.userRepository.getUsers();
             sendResponse(response, 200, SuccessStatusCode.Success, users);
+        }catch(error){
+            sendResponse(response, 400, ErrorStatusCode.Failure);
+        }
+    }
+    
+    public getUserDataById = async (request: Request, response:Response): Promise<any> => {
+        try{
+            const { id } = request.params
+            const user = await this.userRepository.getUserById(+id);
+            if(!user) return sendResponse(response, 404, ErrorStatusCode.UserNotFound);
+            sendResponse(response, 200, SuccessStatusCode.Success, user);
+        }catch(error){
+            sendResponse(response, 400, ErrorStatusCode.Failure);
+        }
+    }
+    
+    public blockUser = async (request: Request, response:Response): Promise<any> => {
+        try{
+            const { id } = request.params
+            const user = await this.userRepository.getUserById(+id);
+            if(!user) return sendResponse(response, 404, ErrorStatusCode.UserNotFound);
+            user.accountStatus = UserAccountStatus.BLOCKED
+            await this.userRepository.saveUser(user);
+            sendResponse(response, 200, SuccessStatusCode.Success, user);
+        }catch(error){
+            sendResponse(response, 400, ErrorStatusCode.Failure);
+        }
+    }
+    
+    public unblockUser = async (request: Request, response:Response): Promise<any> => {
+        try{
+            const { id } = request.params
+            const user = await this.userRepository.getUserById(+id);
+            if(!user) return sendResponse(response, 404, ErrorStatusCode.UserNotFound);
+            user.accountStatus = UserAccountStatus.ACTIVE
+            await this.userRepository.saveUser(user);
+            sendResponse(response, 200, SuccessStatusCode.Success, user);
         }catch(error){
             sendResponse(response, 400, ErrorStatusCode.Failure);
         }

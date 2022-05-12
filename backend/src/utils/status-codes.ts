@@ -6,7 +6,9 @@ export enum ErrorStatusCode {
     InvalidUsername = 10005,
     InvalidPassword = 10006,
     UserAlreadyExists = 10007,
-    InsufficientMoney = 10008
+    InsufficientMoney = 10008,
+    UserNotFound = 10009,
+    AccountBlocked = 10010
 }
 
 
@@ -29,6 +31,8 @@ const ErrorStatusCodeDescription: { [key: number]: string } = {
     10006: "Invalid password",
     10007: "User with provided username already exists",
     10008: "Insufficient money in account",
+    10009: "User not found",
+    10010: "Account blocked",
 }
 
 const SuccessStatusCodeDescription: { [key: number]: string } = {

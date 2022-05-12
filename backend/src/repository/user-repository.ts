@@ -14,6 +14,11 @@ export class UserRepository{
     async getUser(criteria:any, entityManager?:EntityManager){
         if(entityManager) return await entityManager.findOne(UserEntity, {where:criteria});
         return await this.userRepository.findOne({where:criteria})
+    }
+    
+    async getUserById(id:number, entityManager?:EntityManager){
+        if(entityManager) return await entityManager.findOne(UserEntity, {where:{id}, relations:['tickets', 'tickets.items','transactions']});
+        return await this.userRepository.findOne({where:{id}, relations:['tickets', 'tickets.items','transactions']})
         // return await connectionTool.find(UserEntity, {where:criteria});
     }
 
@@ -48,5 +53,10 @@ export class UserRepository{
 
         manager.save(user);
         manager.save(transaction);
+    }
+
+    async saveUser(user:UserEntity, entityManager?:EntityManager){
+        const manager = entityManager ? entityManager : this.userRepository.manager;
+        return await manager.save(user)
     }
 }

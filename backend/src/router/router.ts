@@ -14,7 +14,10 @@ export const router = Router()
 
 //Admin routes
 router.get('/users', authController.adminAuthMiddleware, adminController.getUsers)
+router.get('/user/:id', authController.adminAuthMiddleware, adminController.getUserDataById)
 router.get('/stats', authController.adminAuthMiddleware, adminController.getStats)
+router.put('/block/:id', authController.adminAuthMiddleware, adminController.blockUser)
+router.put('/unblock/:id', authController.adminAuthMiddleware, adminController.unblockUser)
 
 //Auth routes
 router.post('/login', authController.login)

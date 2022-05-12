@@ -8,6 +8,7 @@ import * as RequestModels from '../models/requests/index'
 import { UserEntity } from "../entities/user.entity";
 import { updapteUserTickets } from "../utils/update-ticket";
 import { UserRole } from "../models/user-role.enum";
+import { UserAccountStatus } from "../models/user-account-status.enums";
 
 export class AuthController{
     
@@ -25,6 +26,7 @@ export class AuthController{
             if(!user) return sendResponse(response, 400, ErrorStatusCode.InvalidUsername)
 
             if(await Helpers.comparePassword(password, user.password)){
+                if(user.accountStatus == UserAccountStatus.BLOCKED) return sendResponse(response, 400, ErrorStatusCode.AccountBlocked)
                 request.session.user = user;
 
                 await updapteUserTickets(user.id);

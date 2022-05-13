@@ -11,6 +11,7 @@ import { SportMatches } from '../SportMatches';
 import { SportSidebarList } from '../SportSidebarList';
 import { useNavigate } from 'react-router-dom';
 import GlobalContext from '../../global-context';
+import LogoImg from '../../images/better-logo.png'
 
 declare module '@mui/material/styles' {
   interface Theme {
@@ -64,46 +65,46 @@ const Home = () => {
   const globalContext = useContext(GlobalContext);
 
 
-  useEffect(()=>{
-    setInterval(()=>{
+  useEffect(() => {
+    setInterval(() => {
       globalContext.setRefreshGlobalContext(!globalContext.refreshGlobalContext)
-    },60000) //fetch master data every 20 sec
-  },[])
-  
+    }, 60000) //fetch master data every 20 sec
+  }, [])
 
-  const submitTicket = () =>{
-    if(!ticketAmount || ticketAmount <= 0){
+
+  const submitTicket = () => {
+    if (!ticketAmount || ticketAmount <= 0) {
       alert("Enter valid ticket amount")
       return;
     }
-    if(!globalContext.user || !ticketAmount) return;
-    if(ticketAmount > globalContext.user.balance || !globalContext.user.balance){
+    if (!globalContext.user || !ticketAmount) return;
+    if (ticketAmount > globalContext.user.balance || !globalContext.user.balance) {
       alert('You don`t have enough money to submit ticket\nPay in money first')
       setTicketDialogState(false)
-    }else{
+    } else {
       const httpService = new Httper('http://localhost:3001');
-      httpService.submitTicket(globalContext.ticket, ticketAmount).then(response =>{
-        if(response.status==200){
+      httpService.submitTicket(globalContext.ticket, ticketAmount).then(response => {
+        if (response.status == 200) {
           alert('Successfully submited ticket');
-          globalContext.setTicket({selectedBets:[]});
-        }else{
-          
+          globalContext.setTicket({ selectedBets: [] });
+        } else {
+
           console.log(response.statusCode)
-          if(response.statusCode == 10008){
+          if (response.statusCode == 10008) {
             console.log(response);
             alert('You don`t have enough money to submit ticket\nPay in money first')
-          }else{
+          } else {
             console.log(response);
             alert('Unexpected error')
           }
         }
-      }).catch(error=>{
+      }).catch(error => {
         console.log(error);
         alert('Unexpected error')
-      }).finally(()=>{
+      }).finally(() => {
         setTicketDialogState(false)
       });
-      
+
     }
   }
 
@@ -130,7 +131,9 @@ const Home = () => {
       {globalContext.masterData ?
         <div style={{ display: 'flex' }}>
           <Drawer sx={{ ...styles.drawer }} variant='permanent' anchor='left'>
-            <Typography variant="h2" className='logo'>LOGO</Typography>
+            <Typography variant="h2" className='logo'>
+              <img src={LogoImg} alt="" />
+            </Typography>
             <Divider />
             <Typography sx={{ width: '100%' }} variant="h3" className='logo'>
               <Button onClick={() => navigate('/profile')} sx={{ width: '100%', height: '100%', fontSize: '2rem', '& .MuiButton-startIcon .MuiSvgIcon-root ': { fontSize: '2rem' }, '&.MuiSvgIcon-root': { fontSize: '2rem' } }} startIcon={<Person fontSize='large' />}>{globalContext.user?.username || 'Guest'}</Button>

@@ -42,7 +42,7 @@ export class AdminController{
             await this.userRepository.saveUser(user);
             sendResponse(response, 200, SuccessStatusCode.Success, user);
         }catch(error){
-            sendResponse(response, 400, ErrorStatusCode.Failure);
+            sendResponse(response, 500, ErrorStatusCode.Failure);
         }
     }
     
@@ -55,7 +55,7 @@ export class AdminController{
             await this.userRepository.saveUser(user);
             sendResponse(response, 200, SuccessStatusCode.Success, user);
         }catch(error){
-            sendResponse(response, 400, ErrorStatusCode.Failure);
+            sendResponse(response, 500, ErrorStatusCode.Failure);
         }
     }
 

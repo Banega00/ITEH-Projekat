@@ -23,7 +23,7 @@ export class SoccerHttpClient{
 
     //get matches for specific competititon
     public getMatches = async(competitionId:number) => {
-        const response:MatchesPerCompetition[] = await this.httper.get(`/Prematch/GetCompetitionMatches?competitionId=${competitionId}`);
+        const response = await this.httper.get(`/Prematch/GetCompetitionMatches?competitionId=${competitionId}`);
         return response;
     }
 }

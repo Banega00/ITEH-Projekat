@@ -1,0 +1,555 @@
+openapi: 3.0.1
+info:
+  title: Better - E-Betting System
+  description: 'This specification describes API for integration with Better Backend Server written in NodeJS'
+  contact:
+    email: bane.stojanovic@gmail.com
+  version: 1.0.0
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+tags:
+- name: Admin
+  description: Administrator routes
+- name: Auth
+  description: Routes didcated for authorization and authentication
+- name: Main
+  description: Main and most fundamental routes
+paths:
+  /users:
+    get:
+      tags:
+      - Admin
+      summary: Route for getting all users and users data
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        500:
+          description: Internal server error
+  /user/{id}:
+    get:
+      tags:
+      - Admin
+      summary: Gets detailed data about user
+      parameters:
+        - name: id
+          in: path
+          description: ID of user in database
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/User'
+        500:
+          description: Internal Server Error
+  
+  /stats:
+    get:
+      tags:
+      - Admin
+      summary: Get statistical data about users, tickets, winnings etc.
+      responses:
+        200:
+         description: Ok
+         content:
+           application/json:
+              schema:
+                type: object
+                properties:
+                  users: 
+                    type: number
+                  tickets: 
+                    type: number
+                  bets:
+                    type: number
+                  successful_tickets: 
+                    type: number
+                  successful_bets: 
+                    type: number
+        500:
+          description: Internal server error
+  /block/{id}:
+    put:
+      tags:
+      - Admin
+      summary: Block user by ID
+      parameters:
+        - name: id
+          in: path
+          description: ID of user in database
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+         description: Ok
+        404:
+          description: User not found
+        500:
+          description: Internal server error
+  /unblock/{id}:
+    put:
+      tags:
+      - Admin
+      summary: Block user by ID
+      parameters:
+        - name: id
+          in: path
+          description: ID of user in database
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+         description: Ok
+        404:
+          description: User not found
+        500:
+          description: Internal server error
+  /login:
+    post:
+      tags:
+      - Auth
+      summary: Login user by its credentials
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                  username:
+                    type: string
+                  password:
+                    type: string
+      responses:
+        200:
+         description: Ok
+        400:
+          description: Invalid username or Invalid Password
+        500:
+          description: Internal server error
+  /register:
+    post:
+      tags:
+      - Auth
+      summary: Register user - creates new user account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                  username:
+                    type: string
+                  password:
+                    type: string
+                  name:
+                    type: string
+                  email:
+                    type: string
+      responses:
+        200:
+         description: Ok
+        400:
+          description: Invalid data
+        500:
+          description: Internal server error
+  /logout:
+    get:
+      tags:
+      - Auth
+      summary: Logout currently loggedin user (from cookie)
+      responses:
+        200:
+         description: Ok
+        500:
+          description: Internal server error
+  /checkAuth:
+    get:
+      tags:
+      - Auth
+      summary: Check if user is logged in (from cookie)
+      responses:
+        200:
+         description: OK
+        401:
+          description: Unauthorized
+  /userData:
+    get:
+      tags:
+      - Auth
+      summary: Gets basic data of currentlly loggedin user
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/User'
+        401:
+          description: Unauthorized
+  /healt:
+    get:
+      tags:
+      - Main
+      summary: Check if server is up and running
+      responses:
+        200:
+          description: Ok  
+  /get-master-data:
+    get:
+      tags:
+      - Main
+      summary: Returns meta data about Sport Events
+      responses:
+        200:
+          description: Ok
+          content:
+           application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/MasterData'
+        500:
+          description: Internal server error
+  /get-competition-filter:
+    get:
+      tags:
+      - Main
+      summary: Returns Competitons data and number of Matches on each competiton
+      responses:
+        200:
+          description: Ok
+          content:
+           application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    CompetitionId:
+                      type: number
+                    MatchCount:
+                      type: number
+        500:
+          description: Internal server error
+  /get-matches/{:competitionId}:
+    get:
+      tags:
+      - Main
+      summary: Returns matches for specific competiton
+      responses:
+        200:
+          description: Ok
+          content:
+           application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    type: object
+                    $ref: '#/components/schemas/Match'
+        500:
+          description: Internal server error
+  /user-profile-data:
+    get:
+      tags:
+      - Main
+      summary: Returns detailed data about the user including all its tickets and transactions
+      responses:
+        200:
+          description: Ok
+          content:
+           application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  $ref: '#/components/schemas/UserProfileData'
+        500:
+          description: Internal server error
+  /make-transaction:
+    post:
+      tags:
+      - Main
+      summary: Make financial transaction for logged in user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                transactionPurpose:
+                  type: string
+                  enum: ['Ticket','Withdraw','Pay in']
+                value:
+                  type: number
+      responses:
+        200:
+          description: Ok
+        500:
+          description: Internal server error  
+  /submit-ticket:
+    post:
+      tags:
+      - Main
+      summary: Route for submiting a ticket
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                selectedBets:
+                  type: array
+                  items: 
+                    type: object
+                    allOf: 
+                      - $ref: '#/components/schemas/Match'
+                      - type: object
+                        properties:
+                          selectedBet: 
+                            type: object
+                            $ref: '#/components/schemas/Bet'
+      responses:
+        200:
+          description: Ok
+        500:
+          description: Internal server error
+  /update-user-tickets:
+    get:
+      tags:
+      - Main
+      summary: This route should be called upon users logging, to update its active tickets
+      responses:
+        200:
+          description: Ok
+        500:
+          description: Internal server error
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: number
+        username:
+          type: string
+        password:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        accountStatus:
+          type: string
+          enum: ['Active', 'Blocked']
+        role:
+          type: string
+          enum: ['Admin','User']
+        balance:
+          type: number  
+    UserProfileData:
+      type: object
+      properties:
+        id:
+          type: number
+        username:
+          type: string
+        password:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        accountStatus:
+          type: string
+          enum: ['Active', 'Blocked']
+        role:
+          type: string
+          enum: ['Admin','User']
+        balance:
+          type: number 
+        transactions:
+          type: array
+          items:
+            type: object
+        tickets:
+          type: array
+          items:
+            type: object  
+    Match:
+      type: object
+      properties:
+        Id: 
+          type: number
+        HomeCompetitorName: 
+          type: string
+        AwayCompetitorName: 
+          type: string
+        Code: 
+          type: number
+        ExternalId:
+          type: number
+        StreamId: 
+          type: number
+        StartDate: 
+          type: string
+        Status: 
+          type: number
+        CompetitionId: 
+          type: number
+        SportId: 
+          type: number
+        FavouriteBets:
+          type: array
+          items: 
+            type: object
+            $ref: '#/components/schemas/Bet'
+    MasterData:
+      type: object
+      properties: 
+        CompetitionsData:
+          type: object
+          properties:
+            Sports:
+              type: array
+              items:
+                type: object
+                properties:
+                  Id:
+                    type: number
+                  Name: 
+                    type: string
+                  OrderId:
+                    type: number
+            Countries:
+              type: array
+              items:
+                type: object
+                properties:
+                  Id:
+                    type: number
+                  Name: 
+                    type: string
+                  ShortName:
+                    type: string
+            Competitions:
+              type: array
+              items:
+                type: object
+                properties:
+                  Id:
+                    type: number
+                  Name: 
+                    type: string
+                  ShortName:
+                    type: string
+                  IsFeatured: 
+                    type: string
+                  CountryId:
+                    type: number
+                  SportId:
+                    type: number
+        BetGameOutcomesData:
+          type: object
+          properties:
+            BetGameGroups:
+              type: array
+              items:
+                type: object
+                properties:
+                  Id:
+                    type: number
+                  Name: 
+                    type: string
+                  OrderId:
+                    type: number
+            BetGames:
+              type: array
+              items: 
+                type: object
+                properties:
+                  Id:
+                    type: number
+                  Name:
+                    type: string 
+                  OrderId:
+                    type: number
+                  BetParamName:
+                    type: number
+                  BetParamShortName:
+                    type: number
+                  HasHandicapOrTotalBetParam:
+                    type: number
+                  HasScoreBetParam:
+                    type: number
+                  HasPeriodBetParam:
+                    type: number
+                  HasAdditionalBetParam:
+                    type: number
+                  BetGameGroupId:
+                    type: number
+            BetGameOutcomes:
+              type: array
+              items:
+                type: object
+                properties:
+                  Id:
+                    type: number
+                  Name:
+                    type: number
+                  Description:
+                    type: string
+                  OrderId:
+                    type: number
+                  CodeForPrinting:
+                    type: string
+                  BetGameId:
+                    type: number
+        PeriodsData:
+          type: array
+          items:
+            type: object
+            properties:
+              Id:
+                type: number
+              Name:
+                type: string
+              ShortName:
+                type: string
+              OrderId:
+                type: number
+    Bet:
+      type: object
+      properties:
+        Id:
+          type: number
+        Odds:
+          type: number
+        IsEnabled:
+          type: boolean
+        HandicapOrTotalParam:
+          type: number
+        ScoreParam:
+          type: number
+        PeriodParam:
+          type: number
+        AdditionalParam:
+          type: number
+        BetGameOutcomeId:
+          type: number
+          

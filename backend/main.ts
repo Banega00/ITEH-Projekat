@@ -20,7 +20,7 @@ import { UserEntity } from "./src/entities/user.entity";
 
         await dataSource.initialize();
 
-        await dataSource.runMigrations();
+        // await dataSource.runMigrations();
         console.log(dataSource.migrations)
         console.log(`Connected to database successfully! 💾`)
 
@@ -28,8 +28,8 @@ import { UserEntity } from "./src/entities/user.entity";
         app.listen(PORT);
         console.log(`Server is listening on port ${PORT} 🔥🔥🔥`)
 
-        // updateFinishedMatches()
-        // setInterval(updateFinishedMatches,10*60*1000)//every 10 mins
+        updateFinishedMatches()
+        setInterval(updateFinishedMatches,10*60*1000)//every 10 mins
     } catch (error) {
         console.log(error);
         process.exit(-1);

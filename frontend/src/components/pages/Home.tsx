@@ -78,7 +78,7 @@ const Home = () => {
       return;
     }
     if (!globalContext.user || !ticketAmount) return;
-    if (ticketAmount > globalContext.user.balance || !globalContext.user.balance) {
+    if (ticketAmount > (+globalContext.user._balance) || !globalContext.user._balance) {
       alert('You don`t have enough money to submit ticket\nPay in money first')
       setTicketDialogState(false)
     } else {
@@ -210,7 +210,7 @@ const Home = () => {
           <DialogTitle>Submit a ticket</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              Your balance is {globalContext.user.balance ? (+globalContext.user.balance).toFixed(2) : new Number(0).toFixed(2)}$
+              Your balance is {globalContext.user._balance ? (+globalContext.user._balance).toFixed(2) : new Number(0).toFixed(2)}$
             </DialogContentText>
             <Box>
               <Divider />

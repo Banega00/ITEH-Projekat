@@ -142,7 +142,7 @@ export class MainController{
         }
 
         try{
-            if(ticketAmount > request.session.user.balance || !request.session.user.balance){
+            if(ticketAmount > (+request.session.user._balance) || !request.session.user._balance){
                return sendResponse(response, 400, ErrorStatusCode.InsufficientMoney);
             }
 
